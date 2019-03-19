@@ -30,6 +30,13 @@ function Clear-ObsoleteCache
 }
 function Find-Obsolete
 {
+    <#
+    .SYNOPSIS
+    Searches a script for use of Obsolete Parameters
+
+    .Notes
+    
+    #>
     [Alias('FullName')]
     [cmdletbinding()]
     param(
@@ -90,46 +97,5 @@ function Find-Obsolete
             }
         }
     }
-}
-
-function Find-Obsolete
-{
-    param($Data, $Path)
-
-    try
-    {
-        $script = [scriptblock]::Create($Data)
-    }
-    catch
-    {
-        Write-Verbose "Unable to get scriptblock from [$Path]"
-        return
-    }
-    $astCommandList = $script | Select-AST -Type CommandAst
-    #$astCommand = $astCommandList[0]
-    foreach ($astCommand in $astCommandList)
-    {
-        $name = $astCommand.CommandElements[0].Value
-        if ($null -ne $name -and $commandMap[$name])
-        {
-            $parameterList = $astCommand | Select-AST -Type CommandParameterAst
-            #$param = $parameterList[0]
-            foreach ($param in $parameterList)
-            {
-                if ( $commandMap[$name][$param.ParameterName])
-                {
-                    Write-Verbose ('obsolete [{0}][{1}] line [{2}:{3}]' -f $name,$param.ParameterName, $path, $param.extent.StartLineNumber ) -Verbose
-                }
-            }
-        }
-    }
-}
-
-$fileList = Get-ChildItem -Path C:\ldx\DevOpsScripts\Toolkit -Recurse *.ps1
-
-foreach ($file in $fileList)
-{
-    $data = Get-Content -Path $file.fullname -Raw
-    Find-Obsolete -Data $data -Path $file.fullname
 }
 
