@@ -28,6 +28,7 @@ function Clear-ObsoleteCache
 {
     $Script:commandMap = $null
 }
+
 function Find-Obsolete
 {
     <#
@@ -35,15 +36,18 @@ function Find-Obsolete
     Searches a script for use of Obsolete Parameters
 
     .Notes
-    
+    The first time this executes, it will cache all command info
+    this can take several minutes so be patient
     #>
     [Alias('FullName')]
     [cmdletbinding()]
     param(
         [Parameter(
             Mandatory,
-            ValueFromPipelineByPropertyName
+            ValueFromPipelineByPropertyName,
+            ValueFromPipeline
         )]
+        [String]
         $Path
     )
 
@@ -52,6 +56,7 @@ function Find-Obsolete
         Write-Verbose "Gathering cached command data for obsolete parameters"
         $commandMap = Get-CommandCache
     }
+
     process
     {
         if ($commandMap.Count -eq 0)
