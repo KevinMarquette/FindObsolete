@@ -7,7 +7,7 @@ $publishModuleSplat = @{
     ErrorAction = 'Stop'
 }
 
-Install-Module Select-Ast -Scope CurrentUser
+Install-Module Select-Ast -Scope CurrentUser -Force
 
 "Files in module output:"
 Get-ChildItem $Destination -Recurse -File |
